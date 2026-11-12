@@ -1,0 +1,22 @@
+package com.yawolart.minimalBanking.dto;
+
+import com.yawolart.minimalBanking.enumaration.AccountType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.math.BigDecimal;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class AccountInfoRespDto {
+    private Long accountNo;
+    private String firstName;
+    private String lastName;
+    private String address;
+    private BigDecimal balance;
+    private AccountType accountType;
+}
