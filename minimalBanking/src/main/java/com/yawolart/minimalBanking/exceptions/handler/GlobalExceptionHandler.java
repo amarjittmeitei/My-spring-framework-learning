@@ -1,10 +1,7 @@
 package com.yawolart.minimalBanking.exceptions.handler;
 
 import com.yawolart.minimalBanking.dto.ExceptionRespDto;
-import com.yawolart.minimalBanking.exceptions.FindAccountException;
-import com.yawolart.minimalBanking.exceptions.InsufficientBalance;
-import com.yawolart.minimalBanking.exceptions.InvalidAccountTypeException;
-import com.yawolart.minimalBanking.exceptions.NoTransactionFound;
+import com.yawolart.minimalBanking.exceptions.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,6 +63,23 @@ public class GlobalExceptionHandler {
         System.out.println("[GlobalExceptionHandler]");
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
+                .body(respDto);
+    }
+
+    @ExceptionHandler(InvalidAmount.class)
+    public ResponseEntity<ExceptionRespDto> InvalidAmountHandler(
+            HttpServletRequest req,
+            InvalidAmount ex
+    ){
+        ExceptionRespDto respDto = new ExceptionRespDto(
+                HttpStatus.CONTINUE.value(),
+                req.getRequestURI(),
+                LocalDateTime.now(),
+                "Invalid amount value",
+                ex.getMessage()
+        );
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
                 .body(respDto);
     }
 
