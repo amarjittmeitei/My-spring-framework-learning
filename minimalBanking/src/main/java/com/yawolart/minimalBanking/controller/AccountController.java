@@ -3,9 +3,12 @@ package com.yawolart.minimalBanking.controller;
 import com.yawolart.minimalBanking.dto.AccountInfoRespDto;
 import com.yawolart.minimalBanking.dto.CreateAccountReqDto;
 import com.yawolart.minimalBanking.service.AccountService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/account")
@@ -18,7 +21,7 @@ public class AccountController {
     }
 
     @PostMapping("/newaccount")
-    public ResponseEntity<AccountInfoRespDto> createAccount(
+    public ResponseEntity<AccountInfoRespDto> openAccountController(
             @RequestBody
             CreateAccountReqDto reqAccount,
 
@@ -26,11 +29,34 @@ public class AccountController {
             int accountType
     ){
         AccountInfoRespDto respAccount;
-        respAccount = accountService.createAccount(
+        respAccount = accountService.openAccount(
                 reqAccount,
                 accountType
         );
-        return ResponseEntity.ok(respAccount);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(respAccount);
+    }
+
+    @DeleteMapping("/closeaccount/{id}")
+    public ResponseEntity<Boolean> closeAccountController(
+            @PathVariable
+            Long id
+    ){
+        accountService.closeAccount(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/deposit")
+    public ResponseEntity<AccountInfoRespDto> depositController(
+            @RequestParam
+            Long id,
+
+            @RequestParam
+            BigDecimal amount
+    ){
+        AccountInfoRespDto respDto = accountService.deposit(id,amount);
+        return ResponseEntity.ok(respDto);
     }
 
 }
