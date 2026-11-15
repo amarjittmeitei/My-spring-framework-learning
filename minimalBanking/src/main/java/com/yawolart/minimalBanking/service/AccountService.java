@@ -49,6 +49,13 @@ public class AccountService {
         return ModelDtoMapper.mapToAccountInfoRespDto(respAccount);
     }
 
+    public AccountInfoRespDto getAccountInfo(Long id){
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new FindAccountException("Account not" +
+                        " fount on this account no."));
+        return ModelDtoMapper.mapToAccountInfoRespDto(account);
+    }
+
     @Transactional
     public void closeAccount(Long id){
 

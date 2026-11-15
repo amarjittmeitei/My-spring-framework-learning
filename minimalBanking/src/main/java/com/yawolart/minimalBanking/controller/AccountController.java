@@ -3,6 +3,7 @@ package com.yawolart.minimalBanking.controller;
 import com.yawolart.minimalBanking.dto.AccountInfoRespDto;
 import com.yawolart.minimalBanking.dto.CreateAccountReqDto;
 import com.yawolart.minimalBanking.service.AccountService;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -36,6 +37,15 @@ public class AccountController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(respAccount);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AccountInfoRespDto> getAccountInfo(
+            @PathVariable
+            Long id
+    ){
+        AccountInfoRespDto respDto = accountService.getAccountInfo(id);
+        return ResponseEntity.ok(respDto);
     }
 
     @DeleteMapping("/closeaccount/{id}")
