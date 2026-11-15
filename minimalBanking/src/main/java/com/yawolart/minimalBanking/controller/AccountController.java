@@ -2,6 +2,7 @@ package com.yawolart.minimalBanking.controller;
 
 import com.yawolart.minimalBanking.dto.AccountInfoRespDto;
 import com.yawolart.minimalBanking.dto.CreateAccountReqDto;
+import com.yawolart.minimalBanking.model.Transaction;
 import com.yawolart.minimalBanking.service.AccountService;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,6 @@ public class AccountController {
     public ResponseEntity<AccountInfoRespDto> openAccountController(
             @RequestBody
             CreateAccountReqDto reqAccount,
-
             @RequestParam
             int accountType
     ){
@@ -61,12 +61,26 @@ public class AccountController {
     public ResponseEntity<AccountInfoRespDto> depositController(
             @RequestParam
             Long id,
-
             @RequestParam
             BigDecimal amount
     ){
         AccountInfoRespDto respDto = accountService.deposit(id,amount);
         return ResponseEntity.ok(respDto);
+    }
+
+    @PostMapping(
+            path = "/transfer",
+            params = {"fromId","toId","amount"})
+    public ResponseEntity<Transaction> transfer(
+            @RequestParam
+            Long fromId,
+            @RequestParam
+            Long toId,
+            @RequestParam
+            BigDecimal amount
+    ){
+        Transaction transaction = accountService.transfer(fromId,toId,amount);
+        return ResponseEntity.ok(transaction);
     }
 
 }
