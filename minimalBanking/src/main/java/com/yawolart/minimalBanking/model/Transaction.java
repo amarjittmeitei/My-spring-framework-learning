@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -28,5 +29,6 @@ public class Transaction {
     private Account toAcc;
 
     private BigDecimal amount;
-    private LocalDate transactionAt;
+    private LocalDateTime transactionAt;
+
 }

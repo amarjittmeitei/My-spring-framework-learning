@@ -7,22 +7,29 @@ import com.yawolart.minimalBanking.exceptions.FindAccountException;
 import com.yawolart.minimalBanking.exceptions.InvalidAccountTypeException;
 import com.yawolart.minimalBanking.exceptions.InvalidAmount;
 import com.yawolart.minimalBanking.model.Account;
+import com.yawolart.minimalBanking.model.Transaction;
 import com.yawolart.minimalBanking.repository.AccountRepository;
+import com.yawolart.minimalBanking.repository.TransactionRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class AccountService {
 
     AccountRepository accountRepository;
+    TransactionRepository transactionRepository;
 
-    public AccountService(AccountRepository accountRepository) {
+    public AccountService(AccountRepository accountRepository, TransactionRepository transactionRepository) {
         this.accountRepository = accountRepository;
+        this.transactionRepository = transactionRepository;
     }
+
 
     @Transactional
     public AccountInfoRespDto openAccount(
@@ -64,9 +71,18 @@ public class AccountService {
         Account account = accountRepository.findLockedById(id)
                 .orElseThrow(() -> new FindAccountException("Account not " +
                         "found on this account no."));
+        Transaction transaction = new Transaction(
+                UUID.randomUUID().toString(),
+                null,
+                account,
+                amount,
+                LocalDateTime.now()
+        );
 
         BigDecimal currentBalance = account.getBalance();
         account.setBalance(currentBalance.add(amount));
+
+        transactionRepository.save(transaction);
 
         return ModelDtoMapper
                 .mapToAccountInfoRespDto(account);
