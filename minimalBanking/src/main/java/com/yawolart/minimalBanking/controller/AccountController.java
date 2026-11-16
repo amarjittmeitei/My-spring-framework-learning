@@ -58,14 +58,25 @@ public class AccountController {
     }
 
     @PatchMapping("/deposit")
-    public ResponseEntity<AccountInfoRespDto> depositController(
+    public ResponseEntity<Transaction> depositController(
             @RequestParam
             Long id,
             @RequestParam
             BigDecimal amount
     ){
-        AccountInfoRespDto respDto = accountService.deposit(id,amount);
-        return ResponseEntity.ok(respDto);
+        Transaction transaction = accountService.deposit(id,amount);
+        return ResponseEntity.ok(transaction);
+    }
+
+    @PatchMapping("/withdraw")
+    public ResponseEntity<Transaction> withdrawController(
+            @RequestParam
+            Long id,
+            @RequestParam
+            BigDecimal amount
+    ){
+        Transaction transaction = accountService.withdraw(id,amount);
+        return ResponseEntity.ok(transaction);
     }
 
     @PostMapping(

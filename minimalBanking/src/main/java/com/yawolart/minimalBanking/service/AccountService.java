@@ -68,7 +68,7 @@ public class AccountService {
     }
 
     @Transactional
-    public AccountInfoRespDto deposit(
+    public Transaction deposit(
             Long id,
             BigDecimal amount
     ){
@@ -89,10 +89,7 @@ public class AccountService {
         BigDecimal currentBalance = account.getBalance();
         account.setBalance(currentBalance.add(amount));
 
-        transactionRepository.save(transaction);
-
-        return ModelDtoMapper
-                .mapToAccountInfoRespDto(account);
+        return transactionRepository.save(transaction);
     }
 
     @Transactional
@@ -105,8 +102,8 @@ public class AccountService {
         //need to be solved
         //solution should be: lock in ascending order
 
-        if(amount.compareTo(BigDecimal.ONE)<0){
-            throw new InvalidAmount("Transfer amount cannot be negative");
+        if(amount.compareTo(BigDecimal.ZERO)<=0){
+            throw new InvalidAmount("Transfer amount should be greater than zero");
         }
 
         Account fromAcc = accountRepository.findLockedById(fromAccNo)
@@ -131,6 +128,29 @@ public class AccountService {
                 UUID.randomUUID().toString(),
                 fromAcc,
                 toAcc,
+                amount,
+                LocalDateTime.now()
+        );
+
+        return transactionRepository.save(transaction);
+    }
+
+    @Transactional
+    public Transaction withdraw(Long id, BigDecimal amount){
+        if(amount.compareTo(BigDecimal.ZERO)<=0){
+            throw new InvalidAmount("Transfer amount should be greater than zero");
+        }
+        Account account = accountRepository.findLockedById(id)
+                .orElseThrow(()->new FindAccountException("Account not " +
+                        "found on this account number"));
+
+        BigDecimal updatedBalance = account.getBalance().add(amount);
+        account.setBalance(updatedBalance);
+
+        Transaction transaction = new Transaction(
+                UUID.randomUUID().toString(),
+                account,
+                null,
                 amount,
                 LocalDateTime.now()
         );
