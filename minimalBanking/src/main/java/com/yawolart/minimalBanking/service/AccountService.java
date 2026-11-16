@@ -104,6 +104,11 @@ public class AccountService {
         //t1 wait for acc2 and t2 wait acc1. So, deadlock
         //need to be solved
         //solution should be: lock in ascending order
+
+        if(amount.compareTo(BigDecimal.ONE)<0){
+            throw new InvalidAmount("Transfer amount cannot be negative");
+        }
+
         Account fromAcc = accountRepository.findLockedById(fromAccNo)
                 .orElseThrow(() -> new FindAccountException("Account not " +
                         "found on transfer from account no."));
@@ -111,7 +116,7 @@ public class AccountService {
                 .orElseThrow(()-> new FindAccountException("Account not +" +
                         "found on transfer to account no."));
 
-        if (fromAcc.getBalance().compareTo(amount) <= 0){
+        if (fromAcc.getBalance().compareTo(amount) < 0){
             throw new InsufficientBalance("Failed transaction due to " +
                     "Insufficient fund on your account");
         }
